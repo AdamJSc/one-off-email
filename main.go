@@ -1,12 +1,14 @@
 package main
 
 import (
+	"bufio"
 	"flag"
 	"html/template"
 	"log"
 	"one-off-email/app"
 	"one-off-email/domain"
 	"one-off-email/models"
+	"os"
 )
 
 func main() {
@@ -33,24 +35,32 @@ func main() {
 
 func sendEmails() {
 	var (
-		list models.RecipientList
-		err  error
+		recipients models.RecipientList
+		err        error
 	)
 
 	agent := domain.EmailAgent{}
 
 	// try to parse recipients
-	list, err = agent.ParseRecipientsFromFile("data/recipients.yml")
+	recipients, err = agent.ParseRecipientsFromFile("data/recipients.yml")
 	if err != nil {
 		// parse example recipients
-		list, err = agent.ParseRecipientsFromFile("data/recipients.example.yml")
+		recipients, err = agent.ParseRecipientsFromFile("data/recipients.example.yml")
 		if err != nil {
 			log.Fatal(err)
 		}
 	}
 
+	// prompt user to continue
+	log.Printf("send email to %d recipients? [y/N]", len(recipients))
+	inp := bufio.NewScanner(os.Stdin)
+	inp.Scan()
+	if inp.Text() != "y" {
+		log.Fatal("process aborted")
+	}
+
 	// do stuff with recipients
-	log.Println(list)
+	log.Println(recipients)
 }
 
 // dependencies implements app.Container
