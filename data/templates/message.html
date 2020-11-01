@@ -1,8 +1,11 @@
 {{define "message_html"}}
-    <div style="width:200px;font-family:Arial;font-size:14px;">
-        <p>Hi <strong>{{.Recipient.Name}}</strong>,</p>
-        <p>Here's your message!</p>
-        <p>Hope you like it?</p>
-        <p>From <strong>{{.Sender.Name}}</strong></p>
+    <div style="width:400px;font-family:Arial;font-size:14px;">
+        <p>Whassup {{.Recipient.Name}},</p>
+        <p>Heard about the new role, congrats dude! 🙌<br />You're going to rock those sell-out stadiums ⚽️</p>
+        <p>As someone who's been there, done it and got the replica shirt, here's some sound advice for you:</p>
+        <p><strong>{{.Advice}}</strong></p>
+        <p>Remember that. Always.</p>
+        <p>Go and be amazing 🌟</p>
+        <p>Love {{.Sender.Name}} x</p>
     </div>
 {{end}}

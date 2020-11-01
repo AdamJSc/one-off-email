@@ -1,9 +1,15 @@
-{{define "message_txt"}}
-Hi {{.Recipient.Name}},
+{{define "message_txt"}}Whassup {{.Recipient.Name}},
 
-Here's your message!
+Heard about the new role, congrats dude!
+You're going to rock those sell-out stadiums.
 
-Hope you like it?
+As someone who's been there, done it and got the replica shirt, here's some sound advice for you:
 
-From {{.Sender.Name}}
+"{{.Advice}}"
+
+Remember that. Always.
+
+Go and be amazing.
+
+Love {{.Sender.Name}} x
 {{end}}

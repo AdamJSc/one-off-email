@@ -14,7 +14,10 @@ func main() {
 		template: app.MustParseTemplate("data/templates"),
 	}
 
-	deps.Template().ExecuteTemplate(log.Writer(), "message_html", nil)
+	// run in preview mode
+	srv := app.NewServer(&deps)
+	log.Printf("listening on %s...\n", srv.Addr)
+	log.Fatal(srv.ListenAndServe())
 }
 
 // dependencies implements app.Container
