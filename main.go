@@ -17,14 +17,14 @@ func main() {
 	deps.Template().ExecuteTemplate(log.Writer(), "message_html", nil)
 }
 
-// dependencies implements app.Dependencies
+// dependencies implements app.Container
 type dependencies struct {
 	config   *app.Config
 	template *template.Template
 }
 
-// Config implements app.Dependencies.Config()
+// Config implements app.Container.Config()
 func (d *dependencies) Config() *app.Config { return d.config }
 
-// Config implements app.Dependencies.Template()
+// Config implements app.Container.Template()
 func (d *dependencies) Template() *template.Template { return d.template }

@@ -51,8 +51,18 @@ func MustParseTemplate(path string) *template.Template {
 	return tpl
 }
 
-// Dependencies defines the interface for our app's dependencies
-type Dependencies interface {
+// Container defines the interface for our app's Dependencies container
+type Container interface {
+	ConfigInjector
+	TemplateInjector
+}
+
+// ConfigInjector defines the behaviour for injecting our Config
+type ConfigInjector interface {
 	Config() *Config
+}
+
+// TemplateInjector defines the behaviour for injecting our Template
+type TemplateInjector interface {
 	Template() *template.Template
 }
