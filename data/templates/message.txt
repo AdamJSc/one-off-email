@@ -1,0 +1,9 @@
+{{define "message_txt"}}
+Hi {{.Recipient.Name}},
+
+Here's your message!
+
+Hope you like it?
+
+From {{.Sender.Name}}
+{{end}}

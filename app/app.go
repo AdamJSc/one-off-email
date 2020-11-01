@@ -3,7 +3,10 @@ package app
 import (
 	"github.com/joho/godotenv"
 	"github.com/kelseyhightower/envconfig"
+	"html/template"
 	"log"
+	"os"
+	"path/filepath"
 )
 
 // Config stores our app's config
@@ -24,7 +27,32 @@ func MustParseConfig(path string) *Config {
 	return &cfg
 }
 
+// MustParseTemplate returns a parsed template object by walking the provided directory path
+// or fails on error
+func MustParseTemplate(path string) *template.Template {
+	tpl := template.New("emails")
+
+	if err := filepath.Walk(path, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		if info.IsDir() {
+			return nil
+		}
+		tpl, err = tpl.ParseFiles(path)
+		if err != nil {
+			return err
+		}
+		return nil
+	}); err != nil {
+		log.Fatal(err)
+	}
+
+	return tpl
+}
+
 // Dependencies defines the interface for our app's dependencies
 type Dependencies interface {
 	Config() *Config
+	Template() *template.Template
 }
