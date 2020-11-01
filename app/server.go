@@ -1,6 +1,7 @@
 package app
 
 import (
+	"bytes"
 	"fmt"
 	"github.com/gorilla/mux"
 	"log"
@@ -30,25 +31,31 @@ func NewServer(c Container) *http.Server {
 // htmlHandler returns a handler for serving a preview of our HTML message
 func htmlHandler(c Container) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
-		w.Header().Set("Content-Type", "text/html")
-		if err := c.Template().ExecuteTemplate(w, "message_html", models.PreviewMessage()); err != nil {
+		var buf bytes.Buffer
+		if err := c.Template().ExecuteTemplate(&buf, "message_html", models.PreviewMessage()); err != nil {
 			log.Println(err)
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
+
+		w.WriteHeader(http.StatusOK)
+		w.Header().Set("Content-Type", "text/html")
+		w.Write(buf.Bytes())
 	}
 }
 
 // txtHandler returns a handler for serving a preview of our plain text message
 func txtHandler(c Container) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
-		w.Header().Set("Content-Type", "text/plain")
-		if err := c.Template().ExecuteTemplate(w, "message_txt", models.PreviewMessage()); err != nil {
+		var buf bytes.Buffer
+		if err := c.Template().ExecuteTemplate(&buf, "message_txt", models.PreviewMessage()); err != nil {
 			log.Println(err)
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
+
+		w.WriteHeader(http.StatusOK)
+		w.Header().Set("Content-Type", "text/plain")
+		w.Write(buf.Bytes())
 	}
 }
