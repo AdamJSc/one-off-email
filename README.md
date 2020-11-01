@@ -36,3 +36,11 @@ go run main.go
 ```
 
 ...then visit http://localhost:8080 in your web browser to preview the templates
+
+### Run and send emails
+
+From the project root...
+
+```
+go run main.go -send
+```

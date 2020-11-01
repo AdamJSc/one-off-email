@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"html/template"
 	"log"
 	"one-off-email/app"
@@ -14,10 +15,18 @@ func main() {
 		template: app.MustParseTemplate("data/templates"),
 	}
 
-	// run in preview mode
-	srv := app.NewServer(&deps)
-	log.Printf("listening on %s...\n", srv.Addr)
-	log.Fatal(srv.ListenAndServe())
+	send := flag.Bool("send", false, "include this flag to physically issue emails")
+	flag.Parse()
+
+	if !(*send) {
+		// run in preview mode
+		srv := app.NewServer(&deps)
+		log.Printf("listening on %s...\n", srv.Addr)
+		log.Fatal(srv.ListenAndServe())
+	}
+
+	// send emails
+	log.Println("sending emails...")
 }
 
 // dependencies implements app.Container
