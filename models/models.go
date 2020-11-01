@@ -2,9 +2,12 @@ package models
 
 // Identity defines the recipient or sender identity of a Message
 type Identity struct {
-	Name  string
-	Email string
+	Name  string `yaml:"name"`
+	Email string `yaml:"email"`
 }
+
+// RecipientList defines a list of recipient identities
+type RecipientList []Identity
 
 // Message defines our message parameters
 type Message struct {

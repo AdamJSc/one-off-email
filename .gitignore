@@ -1,4 +1,5 @@
 .idea/
 data/.env
+data/recipients.yml
 data/templates/message.html
 data/templates/message.txt
