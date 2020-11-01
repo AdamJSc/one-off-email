@@ -1,2 +1,4 @@
 .idea/
 data/.env
+data/templates/message.html
+data/templates/message.txt
