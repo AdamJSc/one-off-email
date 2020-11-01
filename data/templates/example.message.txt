@@ -1,4 +1,4 @@
-{{define "message_txt"}}Whassup {{.Recipient.Name}},
+{{define "message_txt"}}Whassup {{.To}},
 
 Heard about the new role, congrats dude!
 You're going to rock those sell-out stadiums.
@@ -11,5 +11,5 @@ Remember that. Always.
 
 Go and be amazing.
 
-Love {{.Sender.Name}} x
+Love {{.From}} x
 {{end}}
