@@ -31,8 +31,8 @@ func NewServer(c Container) *http.Server {
 // htmlHandler returns a handler for serving a preview of our HTML message
 func htmlHandler(c Container) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var buf bytes.Buffer
-		if err := c.Template().ExecuteTemplate(&buf, "message_html", models.PreviewMessage()); err != nil {
+		content, err := executeMessageTemplateWithFallback("html", models.PreviewMessage(), c)
+		if err != nil {
 			log.Println(err)
 			w.WriteHeader(http.StatusInternalServerError)
 			return
@@ -40,15 +40,15 @@ func htmlHandler(c Container) http.HandlerFunc {
 
 		w.WriteHeader(http.StatusOK)
 		w.Header().Set("Content-Type", "text/html")
-		w.Write(buf.Bytes())
+		w.Write(content)
 	}
 }
 
 // txtHandler returns a handler for serving a preview of our plain text message
 func txtHandler(c Container) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var buf bytes.Buffer
-		if err := c.Template().ExecuteTemplate(&buf, "message_txt", models.PreviewMessage()); err != nil {
+		content, err := executeMessageTemplateWithFallback("txt", models.PreviewMessage(), c)
+		if err != nil {
 			log.Println(err)
 			w.WriteHeader(http.StatusInternalServerError)
 			return
@@ -56,6 +56,22 @@ func txtHandler(c Container) http.HandlerFunc {
 
 		w.WriteHeader(http.StatusOK)
 		w.Header().Set("Content-Type", "text/plain")
-		w.Write(buf.Bytes())
+		w.Write(content)
 	}
+}
+
+// executeMessageTemplateWithFallback attempts to parse the message template that pertains to the provided type
+// but falls back to example if not exists
+func executeMessageTemplateWithFallback(messageTypeSuffix string, data interface{}, t TemplateInjector) ([]byte, error) {
+	var buf bytes.Buffer
+
+	if err := t.Template().ExecuteTemplate(&buf, fmt.Sprintf("message_%s", messageTypeSuffix), data); err != nil {
+		// fallback to example template
+		if err := t.Template().ExecuteTemplate(&buf, fmt.Sprintf("example_message_%s", messageTypeSuffix), data); err != nil {
+			return nil, err
+		}
+		return buf.Bytes(), nil
+	}
+
+	return buf.Bytes(), nil
 }

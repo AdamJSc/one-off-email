@@ -1,4 +1,4 @@
-{{define "message_txt"}}Whassup {{.To}},
+{{define "example_message_txt"}}Whassup {{.To}},
 
 Heard about the new role, congrats dude!
 You're going to rock those sell-out stadiums.

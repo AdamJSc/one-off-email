@@ -27,6 +27,22 @@ cp data/templates/example.message.html data/templates/message.html
 cp data/templates/example.message.txt data/templates/message.txt
 ```
 
+Change the template names of each new file respectively:
+
+```
+data/templates/message.html
+
+-{{define "example_message_html"}}
++{{define "message_html"}}
+```
+
+```
+data/templates/message.txt
+
+-{{define "example_message_txt"}}
++{{define "message_txt"}}
+```
+
 ### Run in preview mode
 
 From the project root...
