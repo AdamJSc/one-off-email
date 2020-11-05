@@ -7,6 +7,7 @@ import (
 	"log"
 	"one-off-email/app"
 	"one-off-email/domain"
+	"one-off-email/handlers"
 	"one-off-email/models"
 	"os"
 )
@@ -28,7 +29,7 @@ func main() {
 	}
 
 	// run in preview mode
-	srv := app.NewServer(&deps)
+	srv := handlers.NewServer(&deps)
 	log.Printf("listening on %s...\n", srv.Addr)
 	log.Fatal(srv.ListenAndServe())
 }

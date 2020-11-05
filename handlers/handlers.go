@@ -1,17 +1,18 @@
-package app
+package handlers
 
 import (
-	"bytes"
 	"fmt"
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
+	"one-off-email/app"
+	"one-off-email/domain"
 	"one-off-email/models"
 	"time"
 )
 
 // NewServer returns a new web server
-func NewServer(c Container) *http.Server {
+func NewServer(c app.Container) *http.Server {
 	r := mux.NewRouter()
 
 	r.HandleFunc("/html", htmlHandler(c))
@@ -29,9 +30,11 @@ func NewServer(c Container) *http.Server {
 }
 
 // htmlHandler returns a handler for serving a preview of our HTML message
-func htmlHandler(c Container) http.HandlerFunc {
+func htmlHandler(c app.Container) http.HandlerFunc {
+	agent := domain.EmailAgent{EmailAgentInjector: c}
+
 	return func(w http.ResponseWriter, r *http.Request) {
-		content, err := executeMessageTemplateWithFallback("html", models.PreviewMessage(), c)
+		content, err := agent.ParseMessageTemplateWithFallback("html", models.PreviewMessage())
 		if err != nil {
 			log.Println(err)
 			w.WriteHeader(http.StatusInternalServerError)
@@ -45,9 +48,11 @@ func htmlHandler(c Container) http.HandlerFunc {
 }
 
 // txtHandler returns a handler for serving a preview of our plain text message
-func txtHandler(c Container) http.HandlerFunc {
+func txtHandler(c app.Container) http.HandlerFunc {
+	agent := domain.EmailAgent{EmailAgentInjector: c}
+
 	return func(w http.ResponseWriter, r *http.Request) {
-		content, err := executeMessageTemplateWithFallback("txt", models.PreviewMessage(), c)
+		content, err := agent.ParseMessageTemplateWithFallback("txt", models.PreviewMessage())
 		if err != nil {
 			log.Println(err)
 			w.WriteHeader(http.StatusInternalServerError)
@@ -58,20 +63,4 @@ func txtHandler(c Container) http.HandlerFunc {
 		w.Header().Set("Content-Type", "text/plain")
 		w.Write(content)
 	}
-}
-
-// executeMessageTemplateWithFallback attempts to parse the message template that pertains to the provided type
-// but falls back to example if not exists
-func executeMessageTemplateWithFallback(messageTypeSuffix string, data interface{}, t TemplateInjector) ([]byte, error) {
-	var buf bytes.Buffer
-
-	if err := t.Template().ExecuteTemplate(&buf, fmt.Sprintf("message_%s", messageTypeSuffix), data); err != nil {
-		// fallback to example template
-		if err := t.Template().ExecuteTemplate(&buf, fmt.Sprintf("example_message_%s", messageTypeSuffix), data); err != nil {
-			return nil, err
-		}
-		return buf.Bytes(), nil
-	}
-
-	return buf.Bytes(), nil
 }
