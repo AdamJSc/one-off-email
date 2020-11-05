@@ -11,17 +11,15 @@ type RecipientList []Identity
 
 // Message defines our message parameters
 type Message struct {
-	From   string
-	To     string
-	Advice string
+	From string
+	To   string
 }
 
 // PreviewMessage returns a message to be used for previewing our templates
-func PreviewMessage() *Message {
+func PreviewMessage(from string) *Message {
 	return &Message{
-		From:   "Eddie H",
-		To:     "Jase T",
-		Advice: "The more games you win or draw, the more points you'll receive.",
+		From: from,
+		To:   "Jase T",
 	}
 }
 

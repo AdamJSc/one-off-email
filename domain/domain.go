@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"gopkg.in/yaml.v2"
+	"html/template"
 	"io/ioutil"
 	"one-off-email/app"
 	"one-off-email/models"
@@ -11,6 +12,7 @@ import (
 
 // EmailAgentInjector defines the required behaviours for our EmailAgent
 type EmailAgentInjector interface {
+	app.ConfigInjector
 	app.TemplateInjector
 }
 
@@ -37,21 +39,10 @@ func (e *EmailAgent) ParseRecipientsFromFile(path string) (models.RecipientList,
 	return fileContents.Recipients, nil
 }
 
-// ParseMessageTemplate attempts to parse the message template that pertains to the provided type
-func (e *EmailAgent) ParseMessageTemplate(messageTypeSuffix string, data interface{}) ([]byte, error) {
-	var buf bytes.Buffer
-
-	if err := e.Template().ExecuteTemplate(&buf, fmt.Sprintf("message_%s", messageTypeSuffix), data); err != nil {
-		return nil, err
-	}
-
-	return buf.Bytes(), nil
-}
-
 // ParseMessageTemplateWithFallback attempts to parse the message template that pertains to the provided type
 // but falls back to example if not exists
 func (e *EmailAgent) ParseMessageTemplateWithFallback(messageTypeSuffix string, data interface{}) ([]byte, error) {
-	content, err := e.ParseMessageTemplate(messageTypeSuffix, data)
+	content, err := parseMessageTemplate(messageTypeSuffix, data, e.Template())
 	if err == nil {
 		return content, nil
 	}
@@ -61,5 +52,37 @@ func (e *EmailAgent) ParseMessageTemplateWithFallback(messageTypeSuffix string, 
 	if err := e.Template().ExecuteTemplate(&buf, fmt.Sprintf("example_message_%s", messageTypeSuffix), data); err != nil {
 		return nil, err
 	}
+	return buf.Bytes(), nil
+}
+
+// GenerateEmail generates an email object from the provided recipient
+func (e *EmailAgent) GenerateEmail(recipient models.Identity) *models.Email {
+	return &models.Email{
+		Sender: models.Identity{
+			Name:  e.Config().SenderName,
+			Email: e.Config().SenderEmail,
+		},
+		Recipient: recipient,
+		Message: models.Message{
+			From: e.Config().MessageSignOff,
+			To:   recipient.Name,
+		},
+	}
+}
+
+// IssueEmail issues the provided email
+func (e *EmailAgent) IssueEmail(email *models.Email) error {
+	// TODO - implement me
+	return nil
+}
+
+// parseMessageTemplate attempts to parse the message template that pertains to the provided type
+func parseMessageTemplate(messageTypeSuffix string, data interface{}, t *template.Template) ([]byte, error) {
+	var buf bytes.Buffer
+
+	if err := t.ExecuteTemplate(&buf, fmt.Sprintf("message_%s", messageTypeSuffix), data); err != nil {
+		return nil, err
+	}
+
 	return buf.Bytes(), nil
 }

@@ -34,7 +34,7 @@ func htmlHandler(c app.Container) http.HandlerFunc {
 	agent := domain.EmailAgent{EmailAgentInjector: c}
 
 	return func(w http.ResponseWriter, r *http.Request) {
-		content, err := agent.ParseMessageTemplateWithFallback("html", models.PreviewMessage())
+		content, err := agent.ParseMessageTemplateWithFallback("html", models.PreviewMessage(c.Config().MessageSignOff))
 		if err != nil {
 			log.Println(err)
 			w.WriteHeader(http.StatusInternalServerError)
@@ -52,7 +52,7 @@ func txtHandler(c app.Container) http.HandlerFunc {
 	agent := domain.EmailAgent{EmailAgentInjector: c}
 
 	return func(w http.ResponseWriter, r *http.Request) {
-		content, err := agent.ParseMessageTemplateWithFallback("txt", models.PreviewMessage())
+		content, err := agent.ParseMessageTemplateWithFallback("txt", models.PreviewMessage(c.Config().MessageSignOff))
 		if err != nil {
 			log.Println(err)
 			w.WriteHeader(http.StatusInternalServerError)

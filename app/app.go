@@ -11,7 +11,10 @@ import (
 
 // Config stores our app's config
 type Config struct {
-	MailgunAPIKey string `envconfig:"MAILGUN_API_KEY"`
+	MailgunAPIKey  string `envconfig:"MAILGUN_API_KEY" required:"true"`
+	SenderName     string `envconfig:"SENDER_NAME" required:"true"`
+	SenderEmail    string `envconfig:"SENDER_EMAIL", required:"true"`
+	MessageSignOff string `envconfig:"MESSAGE_SIGN_OFF", required:"true"`
 }
 
 // MustParseConfig returns an inflated Config object from the provided file path

@@ -5,7 +5,7 @@ You're going to rock those sell-out stadiums.
 
 As someone who's been there, done it and got the replica shirt, here's some sound advice for you:
 
-"{{.Advice}}"
+"The more games you win or draw, the more points you'll receive".
 
 Remember that. Always.
 

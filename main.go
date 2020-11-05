@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"flag"
+	"fmt"
 	"html/template"
 	"log"
 	"one-off-email/app"
@@ -10,6 +11,7 @@ import (
 	"one-off-email/handlers"
 	"one-off-email/models"
 	"os"
+	"sync"
 )
 
 func main() {
@@ -24,7 +26,8 @@ func main() {
 	flag.Parse()
 
 	if *send {
-		sendEmails()
+		// not running in preview mode
+		sendEmails(&deps)
 		return
 	}
 
@@ -34,13 +37,16 @@ func main() {
 	log.Fatal(srv.ListenAndServe())
 }
 
-func sendEmails() {
+// sendEmails contains our entry-point logic for issuing our emails
+func sendEmails(c app.Container) {
 	var (
 		recipients models.RecipientList
 		err        error
 	)
 
-	agent := domain.EmailAgent{}
+	agent := domain.EmailAgent{
+		EmailAgentInjector: c,
+	}
 
 	// try to parse recipients
 	recipients, err = agent.ParseRecipientsFromFile("data/recipients.yml")
@@ -61,7 +67,50 @@ func sendEmails() {
 	}
 
 	// do stuff with recipients
-	log.Println(recipients)
+	var wg sync.WaitGroup
+	sem := make(chan struct{}, 10) // max concurrent processes
+	errChan := make(chan error)
+
+	for _, r := range recipients {
+		wg.Add(1)
+		sem <- struct{}{}
+		go issueEmail(r, &agent, &wg, sem, errChan)
+	}
+
+	wg.Wait()
+	close(sem)
+	close(errChan)
+
+	log.Printf("process complete... %d processed, %d failed\n", len(recipients), len(errChan))
+	for err := range errChan {
+		log.Println(err)
+	}
+}
+
+// issueEmail issues an email to the provided recipient
+func issueEmail(
+	recipient models.Identity,
+	agent *domain.EmailAgent,
+	wg *sync.WaitGroup,
+	sem chan struct{},
+	errChan chan error,
+) {
+	log.Printf("issuing email to %s...", recipient.Email)
+
+	var done = func() {
+		wg.Done()
+		<-sem
+	}
+
+	email := agent.GenerateEmail(recipient)
+
+	if err := agent.IssueEmail(email); err != nil {
+		errChan <- fmt.Errorf("error issuing to %s: %s", recipient.Email, err.Error())
+		done()
+		return
+	}
+
+	done()
 }
 
 // dependencies implements app.Container
