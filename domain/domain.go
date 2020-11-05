@@ -2,6 +2,8 @@ package domain
 
 import (
 	"bytes"
+	"context"
+	"errors"
 	"fmt"
 	"gopkg.in/yaml.v2"
 	"html/template"
@@ -10,10 +12,14 @@ import (
 	"one-off-email/models"
 )
 
+// mailgunSuccessMessage defines a known good response message from the Mailgun SDK client
+const mailgunSuccessMessage = "Queued. Thank you."
+
 // EmailAgentInjector defines the required behaviours for our EmailAgent
 type EmailAgentInjector interface {
 	app.ConfigInjector
 	app.TemplateInjector
+	app.MailgunInjector
 }
 
 // EmailAgent defines all of our email-related operations
@@ -57,22 +63,64 @@ func (e *EmailAgent) ParseMessageTemplateWithFallback(messageTypeSuffix string, 
 
 // GenerateEmail generates an email object from the provided recipient
 func (e *EmailAgent) GenerateEmail(recipient models.Identity) *models.Email {
+	cfg := e.Config()
+
 	return &models.Email{
 		Sender: models.Identity{
-			Name:  e.Config().SenderName,
-			Email: e.Config().SenderEmail,
+			Name:  cfg.SenderName,
+			Email: cfg.SenderEmail,
 		},
 		Recipient: recipient,
+		ReplyTo: models.Identity{
+			Name:  cfg.ReplyToName,
+			Email: cfg.ReplyToEmail,
+		},
+		Subject: cfg.EmailSubject,
 		Message: models.Message{
-			From: e.Config().MessageSignOff,
+			From: cfg.MessageSignOff,
 			To:   recipient.Name,
 		},
 	}
 }
 
 // IssueEmail issues the provided email
-func (e *EmailAgent) IssueEmail(email *models.Email) error {
-	// TODO - implement me
+func (e *EmailAgent) IssueEmail(ctx context.Context, email *models.Email) error {
+	mg := e.Mailgun()
+
+	bodyPlain, err := parseMessageTemplate("txt", email.Message, e.Template())
+	if err != nil {
+		// must have plain text body
+		return err
+	}
+
+	// new mailgun message
+	mgMsg := mg.NewMessage(
+		email.Sender.String(),
+		email.Subject,
+		string(bodyPlain),
+		email.Recipient.String(),
+	)
+
+	bodyHTML, err := parseMessageTemplate("html", email.Message, e.Template())
+	if err == nil {
+		// add html body if we have one
+		mgMsg.SetHtml(string(bodyHTML))
+	}
+
+	mgMsg.SetTracking(true)
+	mgMsg.SetReplyTo(email.ReplyTo.String())
+
+	result, id, err := mg.Send(ctx, mgMsg)
+	if err != nil {
+		return err
+	}
+	if result != mailgunSuccessMessage {
+		return fmt.Errorf("send message result: %s", result)
+	}
+	if id == "" {
+		return errors.New("send id empty")
+	}
+
 	return nil
 }
 

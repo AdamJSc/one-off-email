@@ -3,6 +3,7 @@ package app
 import (
 	"github.com/joho/godotenv"
 	"github.com/kelseyhightower/envconfig"
+	"github.com/mailgun/mailgun-go/v3"
 	"html/template"
 	"log"
 	"os"
@@ -11,10 +12,14 @@ import (
 
 // Config stores our app's config
 type Config struct {
-	MailgunAPIKey  string `envconfig:"MAILGUN_API_KEY" required:"true"`
-	SenderName     string `envconfig:"SENDER_NAME" required:"true"`
-	SenderEmail    string `envconfig:"SENDER_EMAIL", required:"true"`
-	MessageSignOff string `envconfig:"MESSAGE_SIGN_OFF", required:"true"`
+	MailgunAPIKey       string `envconfig:"MAILGUN_API_KEY" required:"true"`
+	MailgunSenderDomain string `envconfig:"MAILGUN_SENDER_DOMAIN" required:"true"`
+	SenderName          string `envconfig:"SENDER_NAME" required:"true"`
+	SenderEmail         string `envconfig:"SENDER_EMAIL", required:"true"`
+	ReplyToName         string `envconfig:"REPLY_TO_NAME" required:"true"`
+	ReplyToEmail        string `envconfig:"REPLY_TO_EMAIL", required:"true"`
+	EmailSubject        string `envconfig:"EMAIL_SUBJECT", required:"true"`
+	MessageSignOff      string `envconfig:"MESSAGE_SIGN_OFF", required:"true"`
 }
 
 // MustParseConfig returns an inflated Config object from the provided file path
@@ -54,10 +59,18 @@ func MustParseTemplate(path string) *template.Template {
 	return tpl
 }
 
+// NewMailgunClient returns a new Mailgun client
+func NewMailgunClient(senderDomain, apiKey string) *mailgun.MailgunImpl {
+	mg := mailgun.NewMailgun(senderDomain, apiKey)
+	mg.SetAPIBase(mailgun.APIBaseEU)
+	return mg
+}
+
 // Container defines the interface for our app's Dependencies container
 type Container interface {
 	ConfigInjector
 	TemplateInjector
+	MailgunInjector
 }
 
 // ConfigInjector defines the behaviour for injecting our Config
@@ -68,4 +81,9 @@ type ConfigInjector interface {
 // TemplateInjector defines the behaviour for injecting our Template
 type TemplateInjector interface {
 	Template() *template.Template
+}
+
+// MailgunInjector defines the behaviour for injecting our Mailgun client
+type MailgunInjector interface {
+	Mailgun() *mailgun.MailgunImpl
 }
