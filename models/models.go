@@ -9,6 +9,12 @@ type Identity struct {
 }
 
 func (i *Identity) String() string {
+	if i.Email == "" {
+		return ""
+	}
+	if i.Name == "" {
+		return i.Email
+	}
 	return fmt.Sprintf("%s <%s>", i.Name, i.Email)
 }
 
@@ -34,6 +40,7 @@ type Email struct {
 	Sender    Identity
 	Recipient Identity
 	ReplyTo   Identity
+	BCC       Identity
 	Subject   string
 	Message   Message
 }

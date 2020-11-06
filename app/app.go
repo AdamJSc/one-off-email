@@ -18,6 +18,8 @@ type Config struct {
 	SenderEmail         string `envconfig:"SENDER_EMAIL", required:"true"`
 	ReplyToName         string `envconfig:"REPLY_TO_NAME" required:"true"`
 	ReplyToEmail        string `envconfig:"REPLY_TO_EMAIL", required:"true"`
+	BCCName             string `envconfig:"BCC_NAME" required:"true"`
+	BCCEmail            string `envconfig:"BCC_EMAIL", required:"true"`
 	EmailSubject        string `envconfig:"EMAIL_SUBJECT", required:"true"`
 	MessageSignOff      string `envconfig:"MESSAGE_SIGN_OFF", required:"true"`
 }

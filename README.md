@@ -26,8 +26,10 @@ Amend env values so that they reflect the following:
 * `MAILGUN_SENDER_DOMAIN` = Sender domain configured within Mailgun
 * `SENDER_NAME` = Sender's name to issue the email from
 * `SENDER_EMAIL` = Sender's email address to issue the email from
-* `REPLY_TO_NAME` = Reply-to name to include when issuing email
-* `REPLY_TO_EMAIL` = Reply-to email address to include when issuing email
+* `REPLY_TO_NAME` = Name to include with Reply-To when issuing email
+* `REPLY_TO_EMAIL` = Email address to include as Reply-To when issuing email
+* `BCC_NAME` = Name to include with BCC when issuing email
+* `BCC_EMAIL` = Email address to include as BCC when issuing email
 * `EMAIL_SUBJECT` = Subject to use when sending emails️
 * `MESSAGE_SIGN_OFF` = Sign-off name within email message
 

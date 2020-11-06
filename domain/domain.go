@@ -75,6 +75,10 @@ func (e *EmailAgent) GenerateEmail(recipient models.Identity) *models.Email {
 			Name:  cfg.ReplyToName,
 			Email: cfg.ReplyToEmail,
 		},
+		BCC: models.Identity{
+			Name:  cfg.BCCName,
+			Email: cfg.BCCEmail,
+		},
 		Subject: cfg.EmailSubject,
 		Message: models.Message{
 			From: cfg.MessageSignOff,
@@ -108,7 +112,16 @@ func (e *EmailAgent) IssueEmail(ctx context.Context, email *models.Email) error 
 	}
 
 	mgMsg.SetTracking(true)
-	mgMsg.SetReplyTo(email.ReplyTo.String())
+
+	replyTo := email.ReplyTo.String()
+	if replyTo != "" {
+		mgMsg.SetReplyTo(replyTo)
+	}
+
+	bcc := email.BCC.String()
+	if bcc != "" {
+		mgMsg.AddBCC(bcc)
+	}
 
 	result, id, err := mg.Send(ctx, mgMsg)
 	if err != nil {
