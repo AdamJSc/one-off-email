@@ -72,7 +72,9 @@ From the project root...
 go run main.go
 ```
 
-...then visit http://localhost:8080 in your web browser to preview the templates
+...then visit the following pages in your web browser to preview the templates:
+* http://localhost:8080/html
+* http://localhost:8080/txt
 
 ### Run and send emails
 
