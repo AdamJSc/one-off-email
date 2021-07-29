@@ -5,7 +5,6 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	"github.com/mailgun/mailgun-go/v3"
 	"html/template"
 	"log"
 	"one-off-email/app"
@@ -15,6 +14,8 @@ import (
 	"os"
 	"sync"
 	"time"
+
+	"github.com/mailgun/mailgun-go/v3"
 )
 
 func main() {
