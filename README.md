@@ -6,7 +6,7 @@ Send a one-off email to a provided recipient list.
 
 ## Requirements
 
-* Golang 1.14
+* Golang 1.18
 
 ## Running Locally
 
