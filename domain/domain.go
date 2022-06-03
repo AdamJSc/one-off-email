@@ -5,11 +5,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"gopkg.in/yaml.v2"
 	"html/template"
 	"io/ioutil"
 	"one-off-email/app"
 	"one-off-email/models"
+
+	"gopkg.in/yaml.v2"
 )
 
 // mailgunSuccessMessage defines a known good response message from the Mailgun SDK client

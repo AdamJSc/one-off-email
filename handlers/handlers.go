@@ -2,13 +2,14 @@ package handlers
 
 import (
 	"fmt"
-	"github.com/gorilla/mux"
 	"log"
 	"net/http"
 	"one-off-email/app"
 	"one-off-email/domain"
 	"one-off-email/models"
 	"time"
+
+	"github.com/gorilla/mux"
 )
 
 // NewServer returns a new web server
@@ -32,9 +33,14 @@ func NewServer(c app.Container) *http.Server {
 // htmlHandler returns a handler for serving a preview of our HTML message
 func htmlHandler(c app.Container) http.HandlerFunc {
 	agent := domain.EmailAgent{EmailAgentInjector: c}
+	config := c.Config()
+	subject := config.EmailSubject
+	from := config.MessageSignOff
 
 	return func(w http.ResponseWriter, r *http.Request) {
-		content, err := agent.ParseMessageTemplateWithFallback("html", models.PreviewMessage(c.Config().MessageSignOff))
+		heading := fmt.Sprintf(`<p>[Subject]<br />%s</p><p>[Body]<br /></p>`, subject)
+
+		content, err := agent.ParseMessageTemplateWithFallback("html", models.PreviewMessage(from))
 		if err != nil {
 			log.Println(err)
 			w.WriteHeader(http.StatusInternalServerError)
@@ -43,6 +49,7 @@ func htmlHandler(c app.Container) http.HandlerFunc {
 
 		w.WriteHeader(http.StatusOK)
 		w.Header().Set("Content-Type", "text/html")
+		w.Write([]byte(heading))
 		w.Write(content)
 	}
 }
@@ -50,9 +57,18 @@ func htmlHandler(c app.Container) http.HandlerFunc {
 // txtHandler returns a handler for serving a preview of our plain text message
 func txtHandler(c app.Container) http.HandlerFunc {
 	agent := domain.EmailAgent{EmailAgentInjector: c}
+	config := c.Config()
+	subject := config.EmailSubject
+	from := config.MessageSignOff
 
 	return func(w http.ResponseWriter, r *http.Request) {
-		content, err := agent.ParseMessageTemplateWithFallback("txt", models.PreviewMessage(c.Config().MessageSignOff))
+		heading := fmt.Sprintf(`[Subject]
+%s
+
+[Body]
+`, subject)
+
+		content, err := agent.ParseMessageTemplateWithFallback("txt", models.PreviewMessage(from))
 		if err != nil {
 			log.Println(err)
 			w.WriteHeader(http.StatusInternalServerError)
@@ -61,6 +77,7 @@ func txtHandler(c app.Container) http.HandlerFunc {
 
 		w.WriteHeader(http.StatusOK)
 		w.Header().Set("Content-Type", "text/plain")
+		w.Write([]byte(heading))
 		w.Write(content)
 	}
 }
