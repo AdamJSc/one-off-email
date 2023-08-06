@@ -6,27 +6,31 @@ import (
 	"one-off-email/domain"
 	"one-off-email/mailgun"
 	"one-off-email/tpl"
+	"strings"
 )
 
 func main() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 
 	var (
+		configPath       string
 		txtTemplatePath  string
 		htmlTemplatePath string
 		send             bool
 	)
 
-	flag.StringVar(&txtTemplatePath, "txt", "", "Specify path to Txt template file (required)")
+	flag.StringVar(&configPath, "config", "", "Specify path to config file (required)")
+	flag.StringVar(&txtTemplatePath, "txt", "", "Specify path to txt template file (required)")
 	flag.StringVar(&htmlTemplatePath, "html", "", "Specify path to HTML template file (optional)")
 	flag.BoolVar(&send, "send", false, "If true, sends emails via mailgun (otherwise serves web preview of emails)")
-	// TODO: parse config file path
 	flag.Parse()
 
-	if txtTemplatePath == "" {
+	if strings.Trim(configPath, " ") == "" {
+		log.Fatal("-config flag is required")
+	}
+	if strings.Trim(txtTemplatePath, " ") == "" {
 		log.Fatal("-txt flag is required")
 	}
-	// TODO: ensure config file path is not empty
 
 	// TODO: parse config
 	c := &Config{}
