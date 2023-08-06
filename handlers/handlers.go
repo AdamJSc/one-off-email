@@ -32,7 +32,7 @@ func NewServer(c app.Container) *http.Server {
 
 // htmlHandler returns a handler for serving a preview of our HTML message
 func htmlHandler(c app.Container) http.HandlerFunc {
-	agent := domain.EmailAgent{EmailAgentInjector: c}
+	agent := domain.EmailAgentLegacy{EmailAgentInjector: c}
 	config := c.Config()
 	subject := config.EmailSubject
 	from := config.MessageSignOff
@@ -56,7 +56,7 @@ func htmlHandler(c app.Container) http.HandlerFunc {
 
 // txtHandler returns a handler for serving a preview of our plain text message
 func txtHandler(c app.Container) http.HandlerFunc {
-	agent := domain.EmailAgent{EmailAgentInjector: c}
+	agent := domain.EmailAgentLegacy{EmailAgentInjector: c}
 	config := c.Config()
 	subject := config.EmailSubject
 	from := config.MessageSignOff

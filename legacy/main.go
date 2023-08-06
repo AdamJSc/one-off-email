@@ -51,7 +51,7 @@ func sendEmails(c app.Container) {
 		err        error
 	)
 
-	agent := domain.EmailAgent{
+	agent := domain.EmailAgentLegacy{
 		EmailAgentInjector: c,
 	}
 
@@ -102,7 +102,7 @@ func sendEmails(c app.Container) {
 func issueEmail(
 	ctx context.Context,
 	recipient models.Identity,
-	agent *domain.EmailAgent,
+	agent *domain.EmailAgentLegacy,
 	wg *sync.WaitGroup,
 	sem chan struct{},
 	errChan chan error,

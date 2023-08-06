@@ -16,20 +16,20 @@ import (
 // mailgunSuccessMessage defines a known good response message from the Mailgun SDK client
 const mailgunSuccessMessage = "Queued. Thank you."
 
-// EmailAgentInjector defines the required behaviours for our EmailAgent
+// EmailAgentInjector defines the required behaviours for our EmailAgentLegacy
 type EmailAgentInjector interface {
 	app.ConfigInjector
 	app.TemplateInjector
 	app.MailgunInjector
 }
 
-// EmailAgent defines all of our email-related operations
-type EmailAgent struct {
+// EmailAgentLegacy defines all of our email-related operations
+type EmailAgentLegacy struct {
 	EmailAgentInjector
 }
 
 // ParseRecipientsFromFile parses a recipient list from the provided file path
-func (e *EmailAgent) ParseRecipientsFromFile(path string) (models.RecipientList, error) {
+func (e *EmailAgentLegacy) ParseRecipientsFromFile(path string) (models.RecipientList, error) {
 	var fileContents struct {
 		Recipients models.RecipientList `yaml:"recipients"`
 	}
@@ -48,7 +48,7 @@ func (e *EmailAgent) ParseRecipientsFromFile(path string) (models.RecipientList,
 
 // ParseMessageTemplateWithFallback attempts to parse the message template that pertains to the provided type
 // but falls back to example if not exists
-func (e *EmailAgent) ParseMessageTemplateWithFallback(messageTypeSuffix string, data interface{}) ([]byte, error) {
+func (e *EmailAgentLegacy) ParseMessageTemplateWithFallback(messageTypeSuffix string, data interface{}) ([]byte, error) {
 	content, err := parseMessageTemplate(messageTypeSuffix, data, e.Template())
 	if err == nil {
 		return content, nil
@@ -63,7 +63,7 @@ func (e *EmailAgent) ParseMessageTemplateWithFallback(messageTypeSuffix string, 
 }
 
 // GenerateEmail generates an email object from the provided recipient
-func (e *EmailAgent) GenerateEmail(recipient models.Identity) *models.Email {
+func (e *EmailAgentLegacy) GenerateEmail(recipient models.Identity) *models.Email {
 	cfg := e.Config()
 
 	return &models.Email{
@@ -89,7 +89,7 @@ func (e *EmailAgent) GenerateEmail(recipient models.Identity) *models.Email {
 }
 
 // IssueEmail issues the provided email
-func (e *EmailAgent) IssueEmail(ctx context.Context, email *models.Email) error {
+func (e *EmailAgentLegacy) IssueEmail(ctx context.Context, email *models.Email) error {
 	mg := e.Mailgun()
 
 	bodyPlain, err := parseMessageTemplate("txt", email.Message, e.Template())
