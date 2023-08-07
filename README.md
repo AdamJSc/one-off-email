@@ -1,12 +1,12 @@
-# github.com/adamjsc/emailmerge
+# emailmerge
 
 ## About
 
-Send a one-off email to a provided recipient list.
+Send mail-merged email to a provided recipient list.
 
 ## Requirements
 
-* Golang 1.18
+* Golang 1.20
 
 ## Running Locally
 
