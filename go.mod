@@ -1,4 +1,4 @@
-module one-off-email
+module github.com/adamjsc/emailmerge
 
 go 1.20
 

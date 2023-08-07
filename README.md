@@ -1,4 +1,4 @@
-# one-off-email
+# github.com/adamjsc/emailmerge
 
 ## About
 

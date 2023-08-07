@@ -7,13 +7,14 @@ import (
 	"fmt"
 	"html/template"
 	"log"
-	"one-off-email/app"
-	"one-off-email/domain"
-	"one-off-email/handlers"
-	"one-off-email/models"
 	"os"
 	"sync"
 	"time"
+
+	"github.com/adamjsc/emailmerge/app"
+	"github.com/adamjsc/emailmerge/domain"
+	"github.com/adamjsc/emailmerge/handlers"
+	"github.com/adamjsc/emailmerge/models"
 
 	"github.com/mailgun/mailgun-go/v3"
 )

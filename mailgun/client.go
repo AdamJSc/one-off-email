@@ -2,7 +2,8 @@ package mailgun
 
 import (
 	"context"
-	"one-off-email/domain"
+
+	"github.com/adamjsc/emailmerge/domain"
 )
 
 type Client struct{}

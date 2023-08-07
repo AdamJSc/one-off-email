@@ -7,8 +7,9 @@ import (
 	"fmt"
 	"html/template"
 	"io/ioutil"
-	"one-off-email/app"
-	"one-off-email/models"
+
+	"github.com/adamjsc/emailmerge/app"
+	"github.com/adamjsc/emailmerge/models"
 
 	"gopkg.in/yaml.v2"
 )

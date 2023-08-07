@@ -4,10 +4,11 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"one-off-email/app"
-	"one-off-email/domain"
-	"one-off-email/models"
 	"time"
+
+	"github.com/adamjsc/emailmerge/app"
+	"github.com/adamjsc/emailmerge/domain"
+	"github.com/adamjsc/emailmerge/models"
 
 	"github.com/gorilla/mux"
 )

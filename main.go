@@ -3,10 +3,11 @@ package main
 import (
 	"flag"
 	"log"
-	"one-off-email/domain"
-	"one-off-email/mailgun"
-	"one-off-email/tpl"
 	"strings"
+
+	"github.com/adamjsc/emailmerge/domain"
+	"github.com/adamjsc/emailmerge/mailgun"
+	"github.com/adamjsc/emailmerge/tpl"
 )
 
 func main() {
