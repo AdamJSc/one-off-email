@@ -19,6 +19,8 @@ import (
 	"github.com/mailgun/mailgun-go/v3"
 )
 
+// TODO(deprecate): legacy main entrypoint
+
 func main() {
 	log.SetFlags(log.Lshortfile | log.LstdFlags)
 

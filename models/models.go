@@ -2,6 +2,8 @@ package models
 
 import "fmt"
 
+// TODO(deprecate): legacy models
+
 // Identity defines the recipient or sender identity of a Message
 type Identity struct {
 	Name  string `yaml:"name"`

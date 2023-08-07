@@ -17,12 +17,16 @@ import (
 // mailgunSuccessMessage defines a known good response message from the Mailgun SDK client
 const mailgunSuccessMessage = "Queued. Thank you."
 
+// TODO(deprecate): legacy email agent injector
+
 // EmailAgentInjector defines the required behaviours for our EmailAgentLegacy
 type EmailAgentInjector interface {
 	app.ConfigInjector
 	app.TemplateInjector
 	app.MailgunInjector
 }
+
+// TODO(deprecate): legacy email agent
 
 // EmailAgentLegacy defines all of our email-related operations
 type EmailAgentLegacy struct {

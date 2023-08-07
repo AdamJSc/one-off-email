@@ -13,6 +13,8 @@ import (
 	"github.com/gorilla/mux"
 )
 
+// TODO(deprecate): legacy preview server
+
 // NewServer returns a new web server
 func NewServer(c app.Container) *http.Server {
 	r := mux.NewRouter()
