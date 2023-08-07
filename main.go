@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"log"
+	"path/filepath"
 	"strings"
 
 	"github.com/adamjsc/emailmerge/domain"
@@ -14,24 +15,21 @@ func main() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 
 	var (
-		configPath       string
-		txtTemplatePath  string
-		htmlTemplatePath string
-		send             bool
+		templatesPath string
+		send          bool
 	)
 
-	flag.StringVar(&configPath, "config", "", "Specify path to config file (required)")
-	flag.StringVar(&txtTemplatePath, "txt", "", "Specify path to txt template file (required)")
-	flag.StringVar(&htmlTemplatePath, "html", "", "Specify path to HTML template file (optional)")
+	flag.StringVar(&templatesPath, "templates", "", "Specify path to templates folder (required)")
 	flag.BoolVar(&send, "send", false, "If true, sends emails via mailgun (otherwise serves web preview of emails)")
 	flag.Parse()
 
-	if strings.Trim(configPath, " ") == "" {
-		log.Fatal("-config flag is required")
+	if strings.Trim(templatesPath, " ") == "" {
+		log.Fatal("-templates flag is required")
 	}
-	if strings.Trim(txtTemplatePath, " ") == "" {
-		log.Fatal("-txt flag is required")
-	}
+
+	//configPath := filepath.Join(templatesPath, "config.json")
+	txtTemplatePath := filepath.Join(templatesPath, "email.gotpl")
+	htmlTemplatePath := filepath.Join(templatesPath, "email.gohtml")
 
 	// TODO: parse config
 	c := &Config{}
